@@ -293,10 +293,10 @@ def get_table(expression):
         values = np.append(values, value)
     return TruthTable(var, values)
 
-expression = input("Input: ")
-table = get_table(expression)
+#expression = input("Input: ")
+#table = get_table(expression)
 #table = TruthTable("ABC", ("1", "0", "0", "X", "1", "1", "X", "X"))
-kmap = Kmap(table)
-print(kmap.simplify())
-kmap.mode = "pos"
-print(kmap.simplify())
+#kmap = Kmap(table)
+#print(kmap.simplify())
+#kmap.mode = "pos"
+#print(kmap.simplify())
