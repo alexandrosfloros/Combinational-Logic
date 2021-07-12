@@ -216,11 +216,22 @@ class Interface:
                 row[i].configure(text = self.binary[count][i])
             count += 1
 
-        if self.table_var_combobox4.get() == "":
-            self.clear_table()
-        elif self.table_var_combobox3.get() == "":
+        if self.table_var_combobox2.get() == "":
+            self.table_var_combobox2.set(self.table_var_combobox1.get())
             self.table_var_combobox1.set("")
-            self.table_var_combobox2.set("")
+        if self.table_var_combobox3.get() == "":
+            self.table_var_combobox3.set(self.table_var_combobox2.get())
+            self.table_var_combobox2.set(self.table_var_combobox1.get())
+            self.table_var_combobox1.set("")
+        if self.table_var_combobox4.get() == "":
+            self.table_var_combobox4.set(self.table_var_combobox3.get())
+            self.table_var_combobox3.set(self.table_var_combobox2.get())
+            self.table_var_combobox2.set(self.table_var_combobox1.get())
+            self.table_var_combobox1.set("")
+
+        if len(vars) == 0:
+            self.clear_table()
+        elif len(vars) == 1:
             for row in self.table_dig_list[2:]:
                 for dig in row:
                     dig.configure(text = "")
@@ -230,8 +241,7 @@ class Interface:
                 row[0].configure(text = "")
                 row[1].configure(text = "")
                 row[2].configure(text = "")
-        elif self.table_var_combobox2.get() == "":
-            self.table_var_combobox1.set("")
+        elif len(vars) == 2:
             for row in self.table_dig_list[4:]:
                 for dig in row:
                     dig.configure(text = "")
@@ -240,7 +250,7 @@ class Interface:
             for row in self.table_dig_list[:4]:
                 row[0].configure(text = "")
                 row[1].configure(text = "")
-        elif self.table_var_combobox1.get() == "":
+        elif len(vars) == 3:
             for row in self.table_dig_list[8:]:
                 for dig in row:
                     dig.configure(text = "")
@@ -248,7 +258,7 @@ class Interface:
                 min.configure(text = "")
             for row in self.table_dig_list[:8]:
                 row[0].configure(text = "")
-
+    
     def change_table_var(self, event):
         self.update_table()
     
