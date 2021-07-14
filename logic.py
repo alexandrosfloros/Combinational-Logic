@@ -11,25 +11,26 @@ class Kmap:
     def __init__(self, table):
         self.table = table
         self.mode = "sop"
-        if self.table.num == 1:
-            self.values = np.reshape(self.table.values, (2, 1))
-            self.rows = self.table.var
-            self.columns = ""
-        elif self.table.num == 2:
-            self.values = np.reshape(self.table.values, (2, 2))
-            self.rows = self.table.var[0]
-            self.columns = self.table.var[1]
-        elif self.table.num == 3:
-            self.values = np.reshape(self.table.values, (2, 4))
-            self.values[:, [2, 3]] = self.values[:, [3, 2]]
-            self.rows = self.table.var[0]
-            self.columns = self.table.var[1:]
-        else:
-            self.values = np.reshape(self.table.values, (4, 4))
-            self.values[:, [2, 3]] = self.values[:, [3, 2]]
-            self.values[[2, 3], :] = self.values[[3, 2], :]
-            self.rows = self.table.var[:2]
-            self.columns = self.table.var[2:]
+        if len(self.table.values) != 0:
+            if self.table.num == 1:
+                self.values = np.reshape(self.table.values, (2, 1))
+                self.rows = self.table.var
+                self.columns = ""
+            elif self.table.num == 2:
+                self.values = np.reshape(self.table.values, (2, 2))
+                self.rows = self.table.var[0]
+                self.columns = self.table.var[1]
+            elif self.table.num == 3:
+                self.values = np.reshape(self.table.values, (2, 4))
+                self.values[:, [2, 3]] = self.values[:, [3, 2]]
+                self.rows = self.table.var[0]
+                self.columns = self.table.var[1:]
+            else:
+                self.values = np.reshape(self.table.values, (4, 4))
+                self.values[:, [2, 3]] = self.values[:, [3, 2]]
+                self.values[[2, 3], :] = self.values[[3, 2], :]
+                self.rows = self.table.var[:2]
+                self.columns = self.table.var[2:]
 
     def simplify(self):
         self.get_implicants()
@@ -297,6 +298,7 @@ def get_table(expression):
 #table = get_table(expression)
 #table = TruthTable("ABC", ("1", "0", "0", "X", "1", "1", "X", "X"))
 #kmap = Kmap(table)
+#print(kmap.values)
 #print(kmap.simplify())
 #kmap.mode = "pos"
 #print(kmap.simplify())
