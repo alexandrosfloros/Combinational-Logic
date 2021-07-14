@@ -205,6 +205,7 @@ class Interface:
             self.table_var_combobox4.set(self.table.var[3])
 
         count = 0
+
         for min in self.table_min_list[:2 ** self.table.num]:
             min.configure(text = self.table.values[count])
             count += 1
@@ -270,7 +271,30 @@ class Interface:
                 min.configure(text = "")
             for row in self.table_dig_list[:8]:
                 row[0].configure(text = "")
-    
+
+        self.reset_table_var()
+
+        for var in self.table_var_combobox2, self.table_var_combobox3, self.table_var_combobox4:
+            new = list(var["values"])
+            if self.table_var_combobox1.get() != "":
+                new.remove(self.table_var_combobox1.get())
+                var.configure(values = tuple(new))
+        for var in self.table_var_combobox1, self.table_var_combobox3, self.table_var_combobox4:
+            new = list(var["values"])
+            if self.table_var_combobox2.get() != "":
+                new.remove(self.table_var_combobox2.get())
+                var.configure(values = tuple(new))
+        for var in self.table_var_combobox1, self.table_var_combobox2, self.table_var_combobox4:
+            new = list(var["values"])
+            if self.table_var_combobox3.get() != "":
+                new.remove(self.table_var_combobox3.get())
+                var.configure(values = tuple(new))
+        for var in self.table_var_combobox1, self.table_var_combobox2, self.table_var_combobox3:
+            new = list(var["values"])
+            if self.table_var_combobox4.get() != "":
+                new.remove(self.table_var_combobox4.get())
+                var.configure(values = tuple(new))
+
     def change_table_var(self, event):
         self.update_table()
 
@@ -278,7 +302,15 @@ class Interface:
         self.change_min(event)
         self.update_table()
     
+    def reset_table_var(self):
+        self.table_var_combobox1.configure(values = self.alphabet)
+        self.table_var_combobox2.configure(values = self.alphabet)
+        self.table_var_combobox3.configure(values = self.alphabet)
+        self.table_var_combobox4.configure(values = self.alphabet)
+    
     def clear_table(self):
+        self.reset_table_var()
+        
         self.table_var_combobox1.set("")
         self.table_var_combobox2.set("")
         self.table_var_combobox3.set("")
@@ -391,6 +423,29 @@ class Interface:
             self.kmap_column_label3.configure(text = "11")
             self.kmap_column_label4.configure(text = "10")
 
+        self.reset_kmap_var()
+
+        for var in self.kmap_row_var_combobox2, self.kmap_column_var_combobox1, self.kmap_column_var_combobox2:
+            new = list(var["values"])
+            if self.kmap_row_var_combobox1.get() != "":
+                new.remove(self.kmap_row_var_combobox1.get())
+                var.configure(values = tuple(new))
+        for var in self.kmap_row_var_combobox1, self.kmap_column_var_combobox1, self.kmap_column_var_combobox2:
+            new = list(var["values"])
+            if self.kmap_row_var_combobox2.get() != "":
+                new.remove(self.kmap_row_var_combobox2.get())
+                var.configure(values = tuple(new))
+        for var in self.kmap_row_var_combobox1, self.kmap_row_var_combobox2, self.kmap_column_var_combobox2:
+            new = list(var["values"])
+            if self.kmap_column_var_combobox1.get() != "":
+                new.remove(self.kmap_column_var_combobox1.get())
+                var.configure(values = tuple(new))
+        for var in self.kmap_row_var_combobox1, self.kmap_row_var_combobox2, self.kmap_column_var_combobox1:
+            new = list(var["values"])
+            if self.kmap_column_var_combobox2.get() != "":
+                new.remove(self.kmap_column_var_combobox2.get())
+                var.configure(values = tuple(new))
+
     def change_kmap_var(self, event):
         self.update_kmap()
 
@@ -398,8 +453,15 @@ class Interface:
         self.change_min(event)
         self.update_kmap()
 
+    def reset_kmap_var(self):
+        self.kmap_row_var_combobox1.configure(values = self.alphabet)
+        self.kmap_row_var_combobox2.configure(values = self.alphabet)
+        self.kmap_column_var_combobox1.configure(values = self.alphabet)
+        self.kmap_column_var_combobox2.configure(values = self.alphabet)
+
     def clear_kmap(self):
         self.clear_kmap_labels()
+        self.reset_kmap_var()
         
         self.kmap_row_var_combobox1.set("")
         self.kmap_row_var_combobox2.set("")
