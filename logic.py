@@ -11,26 +11,25 @@ class Kmap:
     def __init__(self, table):
         self.table = table
         self.mode = "sop"
-        if len(self.table.values) != 0:
-            if self.table.num == 1:
-                self.values = np.reshape(self.table.values, (2, 1))
-                self.rows = self.table.var
-                self.columns = ""
-            elif self.table.num == 2:
-                self.values = np.reshape(self.table.values, (2, 2))
-                self.rows = self.table.var[0]
-                self.columns = self.table.var[1]
-            elif self.table.num == 3:
-                self.values = np.reshape(self.table.values, (2, 4))
-                self.values[:, [2, 3]] = self.values[:, [3, 2]]
-                self.rows = self.table.var[0]
-                self.columns = self.table.var[1:]
-            else:
-                self.values = np.reshape(self.table.values, (4, 4))
-                self.values[:, [2, 3]] = self.values[:, [3, 2]]
-                self.values[[2, 3], :] = self.values[[3, 2], :]
-                self.rows = self.table.var[:2]
-                self.columns = self.table.var[2:]
+        if self.table.num == 1:
+            self.values = np.reshape(self.table.values, (2, 1))
+            self.rows = self.table.var
+            self.columns = ""
+        elif self.table.num == 2:
+            self.values = np.reshape(self.table.values, (2, 2))
+            self.rows = self.table.var[0]
+            self.columns = self.table.var[1]
+        elif self.table.num == 3:
+            self.values = np.reshape(self.table.values, (2, 4))
+            self.values[:, [2, 3]] = self.values[:, [3, 2]]
+            self.rows = self.table.var[0]
+            self.columns = self.table.var[1:]
+        else:
+            self.values = np.reshape(self.table.values, (4, 4))
+            self.values[:, [2, 3]] = self.values[:, [3, 2]]
+            self.values[[2, 3], :] = self.values[[3, 2], :]
+            self.rows = self.table.var[:2]
+            self.columns = self.table.var[2:]
 
     def simplify(self):
         self.get_implicants()
@@ -42,14 +41,14 @@ class Kmap:
         else:
             if self.mode == "sop":
                 for i in self.implicants:
-                    terms.append("".join(i.term))
+                    terms.append("".join(sorted(i.term, key = lambda x: x.replace("!", ""))))
                 output = " + ".join(sorted(terms, key = lambda x: x.replace("!", "")))
             else:
                 for i in self.implicants:
                     if len(i.term) == 1:
-                        terms.append(" + ".join(i.term))
+                        terms.append(" + ".join(sorted(i.term, key = lambda x: x.replace("!", ""))))
                     else:
-                        terms.append("(" + " + ".join(i.term) + ")")
+                        terms.append("(" + " + ".join(sorted(i.term, key = lambda x: x.replace("!", ""))) + ")")
                 output = "".join(sorted(terms, key = lambda x: x.replace("!", "").replace("(", "").replace(")", "")))
         return output
 
@@ -280,17 +279,14 @@ def get_table(expression):
     var = "".join(sorted(var))
     num = len(var)
     if num == 0:
-        print("\nExpression needs at least one variable!")
-        exit()
+        return "expression_no_var"
     elif num > 4:
-        print("\nExpression cannot have more than 4 variables!")
-        exit()
+        return "expression_many_var"
     for x in it.product("01", repeat = num):
         try:
             value = str(int(eval(expression.replace(var[(num - 4) % num], x[(num - 4) % num]).replace(var[(num - 3) % num], x[(num - 3) % num]).replace(var[(num - 2) % num], x[(num - 2) % num]).replace(var[num - 1], x[num - 1]).replace("0", " False ").replace("1", " True ").replace("!", " not ").replace("+", " or ").replace("*", " and "))))
         except:
-            print("\nExpression is invalid!")
-            exit()
+            return "expression_invalid"
         values = np.append(values, value)
     return TruthTable(var, values)
 

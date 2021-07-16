@@ -89,7 +89,7 @@ class Interface:
             self.table_dig_list.append(table_dig_row)
             min = ttk.Button(self.table, width = 4)
             min.grid(row = i + 1, column = 4)
-            min.bind("<Button-1>", self.change_table_min)
+            min.bind("<Button-1>", self.change_min)
             self.table_min_list.append(min)
         
         self.fill_kmap_button = ttk.Button(self.table_buttons, text = "Fill Kmap", command = self.fill_kmap)
@@ -139,12 +139,12 @@ class Interface:
             for j in range(4):
                 min = ttk.Button(self.kmap, width = 4)
                 min.grid(row = i + 1, column = j + 1)
-                min.bind("<Button-1>", self.change_kmap_min)
+                min.bind("<Button-1>", self.change_min)
                 kmap_min_row.append(min)
 
             self.kmap_min_list.append(kmap_min_row)
         
-        self.evaluate_button = ttk.Button(self.kmap_buttons, text = "Evaluate")
+        self.evaluate_button = ttk.Button(self.kmap_buttons, text = "Evaluate", command = self.get_implicants)
         self.evaluate_button.grid(row = 0, column = 0, padx = 2)
         self.clear_kmap_button = ttk.Button(self.kmap_buttons, text = "Clear Kmap", command = self.clear_kmap)
         self.clear_kmap_button.grid(row = 0, column = 1, padx = 2)
@@ -170,47 +170,54 @@ class Interface:
         self.sop_label.grid(row = 0, column = 0)
         self.pos_label = ttk.Label(self.simplified_expression, text = "POS")
         self.pos_label.grid(row = 3, column = 0)
-        self.sop_output_expression = ttk.Entry(self.simplified_expression, state = "readonly", width = 40)
+        self.sop_output_expression = ttk.Entry(self.simplified_expression, width = 40)
         self.sop_output_expression.grid(row = 0, column = 1)
         self.sop_scrollbar = ttk.Scrollbar(self.simplified_expression, orient = "horizontal", command = self.sop_output_expression.xview)
         self.sop_output_expression.config(xscrollcommand = self.sop_scrollbar.set)
         self.sop_scrollbar.grid(row = 1, column = 1, sticky = "ew")
-        self.pos_output_expression = ttk.Entry(self.simplified_expression, state = "readonly", width = 40)
+        self.pos_output_expression = ttk.Entry(self.simplified_expression, width = 40)
         self.pos_output_expression.grid(row = 3, column = 1)
         self.pos_scrollbar = ttk.Scrollbar(self.simplified_expression, orient = "horizontal", command = self.pos_output_expression.xview)
         self.pos_output_expression.config(xscrollcommand = self.pos_scrollbar.set)
         self.pos_scrollbar.grid(row = 4, column = 1, sticky = "ew")
-        self.sop_input_button = ttk.Button(self.simplified_expression, text = "Set Input")
+        self.sop_input_button = ttk.Button(self.simplified_expression, text = "Set Input", command = self.sop_input())
         self.sop_input_button.grid(row = 0, column = 2, padx = 5)
-        self.pos_input_button = ttk.Button(self.simplified_expression, text = "Set Input")
+        self.pos_input_button = ttk.Button(self.simplified_expression, text = "Set Input", command = self.pos_input())
         self.pos_input_button.grid(row = 3, column = 2, padx = 5)
 
     def fill_table(self):
         self.table = get_table(self.input_expression_entry.get())
-        self.clear_table()
-
-        if self.table.num == 1:
-            self.table_var_combobox4.set(self.table.var)
-        elif self.table.num == 2:
-            self.table_var_combobox3.set(self.table.var[0])
-            self.table_var_combobox4.set(self.table.var[1])
-        elif self.table.num == 3:
-            self.table_var_combobox2.set(self.table.var[0])
-            self.table_var_combobox3.set(self.table.var[1])
-            self.table_var_combobox4.set(self.table.var[2])
+        if self.table == "expression_no_var":
+            print("Expression needs at least one variable!")
+        elif self.table == "expression_many_var":
+            print("Expression cannot have more than four variables!")
+        elif self.table == "expression_invalid":
+            print("Expression is invalid!")
         else:
-            self.table_var_combobox1.set(self.table.var[0])
-            self.table_var_combobox2.set(self.table.var[1])
-            self.table_var_combobox3.set(self.table.var[2])
-            self.table_var_combobox4.set(self.table.var[3])
+            self.clear_table()
 
-        count = 0
+            if self.table.num == 1:
+                self.table_var_combobox4.set(self.table.var)
+            elif self.table.num == 2:
+                self.table_var_combobox3.set(self.table.var[0])
+                self.table_var_combobox4.set(self.table.var[1])
+            elif self.table.num == 3:
+                self.table_var_combobox2.set(self.table.var[0])
+                self.table_var_combobox3.set(self.table.var[1])
+                self.table_var_combobox4.set(self.table.var[2])
+            else:
+                self.table_var_combobox1.set(self.table.var[0])
+                self.table_var_combobox2.set(self.table.var[1])
+                self.table_var_combobox3.set(self.table.var[2])
+                self.table_var_combobox4.set(self.table.var[3])
 
-        for min in self.table_min_list[:2 ** self.table.num]:
-            min.configure(text = self.table.values[count])
-            count += 1
-        
-        self.update_table()
+            count = 0
+
+            for min in self.table_min_list[:2 ** self.table.num]:
+                min.configure(text = self.table.values[count])
+                count += 1
+            
+            self.update_table()
 
     def update_table(self):
         if self.table_var_combobox2.get() == "":
@@ -297,10 +304,6 @@ class Interface:
 
     def change_table_var(self, event):
         self.update_table()
-
-    def change_table_min(self, event):
-        self.change_min(event)
-        self.update_table()
     
     def reset_table_var(self):
         self.table_var_combobox1.configure(values = self.alphabet)
@@ -323,29 +326,33 @@ class Interface:
             min.configure(text = "")
 
     def fill_kmap(self):
-        self.kmap = Kmap(self.table)
-        self.clear_kmap()
-
-        if self.table.num == 1:
-            self.kmap_row_var_combobox1.set(self.kmap.rows)
-        elif self.table.num == 2:
-            self.kmap_row_var_combobox1.set(self.kmap.rows[0])
-            self.kmap_column_var_combobox1.set(self.kmap.columns[0])
-        elif self.table.num == 3:
-            self.kmap_row_var_combobox1.set(self.kmap.rows[0])
-            self.kmap_column_var_combobox1.set(self.kmap.columns[0])
-            self.kmap_column_var_combobox2.set(self.kmap.columns[1])
+        self.update_table()
+        if self.table.num == 0:
+            print("Truth table needs at least one variable!")
         else:
-            self.kmap_row_var_combobox1.set(self.kmap.rows[0])
-            self.kmap_row_var_combobox2.set(self.kmap.rows[1])
-            self.kmap_column_var_combobox1.set(self.kmap.columns[0])
-            self.kmap_column_var_combobox2.set(self.kmap.columns[1])
+            self.kmap = Kmap(self.table)
+            self.clear_kmap()
 
-        for row in range(len(self.kmap.values)):
-            for column in range(len(self.kmap.values[row])):
-                self.kmap_min_list[row][column].configure(text = self.kmap.values[row][column])
+            if self.table.num == 1:
+                self.kmap_row_var_combobox1.set(self.kmap.rows)
+            elif self.table.num == 2:
+                self.kmap_row_var_combobox1.set(self.kmap.rows[0])
+                self.kmap_column_var_combobox1.set(self.kmap.columns[0])
+            elif self.table.num == 3:
+                self.kmap_row_var_combobox1.set(self.kmap.rows[0])
+                self.kmap_column_var_combobox1.set(self.kmap.columns[0])
+                self.kmap_column_var_combobox2.set(self.kmap.columns[1])
+            else:
+                self.kmap_row_var_combobox1.set(self.kmap.rows[0])
+                self.kmap_row_var_combobox2.set(self.kmap.rows[1])
+                self.kmap_column_var_combobox1.set(self.kmap.columns[0])
+                self.kmap_column_var_combobox2.set(self.kmap.columns[1])
 
-        self.update_kmap()
+            for row in range(len(self.kmap.values)):
+                for column in range(len(self.kmap.values[row])):
+                    self.kmap_min_list[row][column].configure(text = self.kmap.values[row][column])
+
+            self.update_kmap()
 
     def update_kmap(self):
         if self.kmap_column_var_combobox2.get() == "":
@@ -362,20 +369,26 @@ class Interface:
             self.kmap_row_var_combobox2.set("")
 
         values = np.array([], str)
+        groups = []
+
         rows = self.kmap_row_var_combobox1.get() + self.kmap_row_var_combobox2.get()
         columns = self.kmap_column_var_combobox1.get() + self.kmap_column_var_combobox2.get()
 
         for row in self.kmap_min_list[:2 ** len(rows)]:
+            group = []
             for min in row[:2 ** len(columns)]:
                 if min["text"] == "":
                     min.configure(text = "0")
-                    values = np.append(values, min["text"])
+                group.append(min["text"])
+            groups.append(group)
 
-        table = TruthTable(rows + columns, [])
+        values = np.array(groups)
+
+        table = TruthTable(rows + columns, values.flatten())
         self.kmap = Kmap(table)
-        self.kmap.columns = columns
         self.kmap.values = values
         self.kmap.rows = rows
+        self.kmap.columns = columns
 
         if table.num == 0:
             self.clear_kmap()
@@ -449,10 +462,6 @@ class Interface:
     def change_kmap_var(self, event):
         self.update_kmap()
 
-    def change_kmap_min(self, event):
-        self.change_min(event)
-        self.update_kmap()
-
     def reset_kmap_var(self):
         self.kmap_row_var_combobox1.configure(values = self.alphabet)
         self.kmap_row_var_combobox2.configure(values = self.alphabet)
@@ -462,6 +471,7 @@ class Interface:
     def clear_kmap(self):
         self.clear_kmap_labels()
         self.reset_kmap_var()
+        self.clear_implicants()
         
         self.kmap_row_var_combobox1.set("")
         self.kmap_row_var_combobox2.set("")
@@ -491,17 +501,24 @@ class Interface:
             else:
                 event.widget.configure(text = "0")
     
-    def evaluate(self):
-        pass
+    def get_implicants(self):
+        self.update_kmap()
+        self.clear_implicants()
+        if self.kmap.table.num == 0:
+            print("Karnaugh map needs at least one variable!")
+        else:
+            self.sop_output_expression.insert(0, self.kmap.simplify())
+            self.kmap.mode = "pos"
+            self.pos_output_expression.insert(0, self.kmap.simplify())
+
+    def clear_implicants(self):
+        self.sop_table.delete(*self.sop_table.get_children())
+        self.pos_table.delete(*self.pos_table.get_children())
+        self.sop_output_expression.delete(0, "end")
+        self.pos_output_expression.delete(0, "end")
 
     def sop_input(self):
-        pass
+        self.input_expression_entry.insert(0, self.sop_output_expression.get())
 
     def pos_input(self):
-        pass
-
-    def set_table(self):
-        pass
-
-    def set_kmap(self):
-        pass
+        self.input_expression_entry.insert(0, self.pos_output_expression.get())
