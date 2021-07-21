@@ -219,11 +219,8 @@ class Interface:
                 self.table_var_combobox3.set(self.table.var[2])
                 self.table_var_combobox4.set(self.table.var[3])
 
-            count = 0
-
-            for min in self.table_min_list[:2 ** self.table.num]:
-                min.configure(text = self.table.values[count])
-                count += 1
+            for n, min in enumerate(self.table_min_list[:2 ** self.table.num]):
+                min.configure(text = self.table.values[n])
             
             self.update_table()
 
@@ -250,12 +247,10 @@ class Interface:
             values = np.append(values, min["text"])
         
         self.table = TruthTable(vars, values)
-        count = 0
 
-        for row in self.table_dig_list:
+        for n, row in enumerate(self.table_dig_list):
             for i in range(4):
-                row[i].configure(text = self.binary[count][i])
-            count += 1
+                row[i].configure(text = self.binary[n][i])
 
         if self.table.num == 0:
             self.clear_table()

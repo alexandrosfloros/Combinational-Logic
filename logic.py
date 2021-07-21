@@ -308,15 +308,15 @@ def parse_sop(sop):
     return sop.split(" + ")
 
 def parse_pos(pos):
-    if "(" in pos or ")" in pos:
-        pos = pos.replace(")(", "-").replace("(", "-").replace(")", "-").split("-")
-        if pos[0] == "":
-            pos.remove("")
-        if pos[-1] == "":
-            pos.remove("")
-        return pos
-    else:
-        return list(pos)
+    pos = pos.replace(")(", "-|").replace("(", "-|").replace(")", "-|").split("-")
+    for n, term in enumerate(pos):
+        if "+" not in term:
+            pos[n] = "|".join(term)
+    pos = "".join(pos).split("|")
+    for term in pos:
+        if term == "":
+            pos.remove(term)
+    return pos
 
 def parse_product(product):
     out = []
