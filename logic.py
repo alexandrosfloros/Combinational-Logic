@@ -332,12 +332,3 @@ def parse_product(product):
 
 def parse_sum(sum):
     return sum.split(" + ")
-
-#expression = input("Input: ")
-#table = get_table(expression)
-#table = TruthTable("ABC", ("1", "0", "0", "X", "1", "1", "X", "X"))
-#kmap = Kmap(table)
-#print(kmap.values)
-#print(kmap.simplify())
-#kmap.mode = "pos"
-#print(kmap.simplify())
