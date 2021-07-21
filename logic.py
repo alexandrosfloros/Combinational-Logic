@@ -24,7 +24,7 @@ class Kmap:
             self.values[:, [2, 3]] = self.values[:, [3, 2]]
             self.rows = self.table.var[0]
             self.columns = self.table.var[1:]
-        else:
+        elif self.table.num == 4:
             self.values = np.reshape(self.table.values, (4, 4))
             self.values[:, [2, 3]] = self.values[:, [3, 2]]
             self.values[[2, 3], :] = self.values[[3, 2], :]
@@ -34,22 +34,17 @@ class Kmap:
     def simplify(self):
         self.get_implicants()
         terms = []
-        if all(value == "0" for value in self.table.values):
-            output = "0"
-        elif all(value in ("1", "X") for value in self.table.values):
-            output = "1"
+        if self.mode == "sop":
+            for i in self.implicants:
+                terms.append("".join(sorted(i.term, key = lambda x: x.replace("!", ""))))
+            output = " + ".join(sorted(terms, key = lambda x: x.replace("!", "")))
         else:
-            if self.mode == "sop":
-                for i in self.implicants:
-                    terms.append("".join(sorted(i.term, key = lambda x: x.replace("!", ""))))
-                output = " + ".join(sorted(terms, key = lambda x: x.replace("!", "")))
-            else:
-                for i in self.implicants:
-                    if len(i.term) == 1:
-                        terms.append(" + ".join(sorted(i.term, key = lambda x: x.replace("!", ""))))
-                    else:
-                        terms.append("(" + " + ".join(sorted(i.term, key = lambda x: x.replace("!", ""))) + ")")
-                output = "".join(sorted(terms, key = lambda x: x.replace("!", "").replace("(", "").replace(")", "")))
+            for i in self.implicants:
+                if len(i.term) == 1:
+                    terms.append(" + ".join(sorted(i.term, key = lambda x: x.replace("!", ""))))
+                else:
+                    terms.append("(" + " + ".join(sorted(i.term, key = lambda x: x.replace("!", ""))) + ")")
+            output = "".join(sorted(terms, key = lambda x: x.replace("!", "").replace("(", "").replace(")", "")))
         return output
 
     def get_implicants(self):
@@ -137,15 +132,34 @@ class Kmap:
             if self.twoxfour(row, column) and self.twoxfour((row + 2) % self.values.shape[0], column):
                 return self.twoxfour(row, column) + self.twoxfour((row + 2) % self.values.shape[0], column)
 
+    def product_to_implicant(self, term):
+        self.mode = "sop"
+        self.simplify()
+        for i in self.implicants:
+            if set(term) == set(i.term):
+                return i.terms
+
+    def sum_to_implicant(self, term):
+        self.mode = "pos"
+        self.simplify()
+        for i in self.implicants:
+            if set(term) == set(i.term):
+                return i.terms
+
 class Implicant:
     def __init__(self, kmap, terms):
         self.kmap = kmap
         self.terms = terms
         self.term = []
-        if self.kmap.mode == "sop":
-            self.get_product()
+        if all(value == "0" for value in self.kmap.table.values):
+            self.term.append("0")
+        elif all(value in ("1", "X") for value in self.kmap.table.values):
+            self.term.append("1")
         else:
-            self.get_sum()
+            if self.kmap.mode == "sop":
+                self.get_product()
+            else:
+                self.get_sum()
 
     def get_product(self):
         self.get_common()
@@ -272,10 +286,10 @@ def get_table(expression):
     expression = expression.replace(" ", "").replace("*", "")
     expression = "*".join(expression)
     expression = expression.replace("!*", "!").replace("*+*", "+").replace("(*", "(").replace("*)", ")")
-    for c in expression:
-        if c.isalpha():
-            if c not in var:
-                var += c
+    for char in expression:
+        if char.isalpha():
+            if char not in var:
+                var += char
     var = "".join(sorted(var))
     num = len(var)
     if num == 0:
@@ -289,6 +303,35 @@ def get_table(expression):
             return "expression_invalid"
         values = np.append(values, value)
     return TruthTable(var, values)
+
+def parse_sop(sop):
+    return sop.split(" + ")
+
+def parse_pos(pos):
+    if "(" in pos or ")" in pos:
+        pos = pos.replace(")(", "-").replace("(", "-").replace(")", "-").split("-")
+        if pos[0] == "":
+            pos.remove("")
+        if pos[-1] == "":
+            pos.remove("")
+        return pos
+    else:
+        return list(pos)
+
+def parse_product(product):
+    out = []
+    count = 0
+    while count != len(product):
+        if product[count] == "!":
+            out.append(product[count] + product[count + 1])
+            count += 1
+        else:
+            out.append(product[count])
+        count += 1
+    return out
+
+def parse_sum(sum):
+    return sum.split(" + ")
 
 #expression = input("Input: ")
 #table = get_table(expression)

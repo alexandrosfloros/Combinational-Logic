@@ -48,7 +48,7 @@ class Interface:
 
         self.fill_table_button = ttk.Button(self.input_expression_buttons, text = "Fill Table", command = self.fill_table)
         self.fill_table_button.grid(row = 0, column = 0, padx = 2)
-        self.clear_entry_button = ttk.Button(self.input_expression_buttons, text = "Clear Entry", command = lambda: self.input_expression_entry.delete(0, "end"))
+        self.clear_entry_button = ttk.Button(self.input_expression_buttons, text = "Clear Entry", command = self.clear_entry)
         self.clear_entry_button.grid(row = 0, column = 1, padx = 2)
 
         self.table_title = ttk.Label(self.left_frame, text = "Truth Table")
@@ -139,7 +139,7 @@ class Interface:
             for j in range(4):
                 min = ttk.Button(self.kmap, width = 4)
                 min.grid(row = i + 1, column = j + 1)
-                min.bind("<Button-1>", self.change_min)
+                min.bind("<Button-1>", self.change_kmap_min)
                 kmap_min_row.append(min)
 
             self.kmap_min_list.append(kmap_min_row)
@@ -151,14 +151,19 @@ class Interface:
 
         self.implicants_display = ttk.Notebook(self.right_frame)
         self.implicants_display.pack()
+
         self.sop_table = ttk.Treeview(self.implicants_display, columns = ("implicants"), show = "headings", height = 10)
         self.sop_table.heading("implicants", text = "Implicants")
         self.sop_table.column("implicants", width = 180)
+        self.sop_table.bind("<<TreeviewSelect>>", self.select_sop)
         self.sop_table.pack()
+
         self.pos_table = ttk.Treeview(self.implicants_display, columns = ("implicants"), show = "headings", height = 10)
         self.pos_table.heading("implicants", text = "Implicants")
         self.pos_table.column("implicants", width = 180)
+        self.pos_table.bind("<<TreeviewSelect>>", self.select_pos)
         self.pos_table.pack()
+
         self.implicants_display.add(self.sop_table, text = "SOP")
         self.implicants_display.add(self.pos_table, text = "POS")
 
@@ -170,21 +175,24 @@ class Interface:
         self.sop_label.grid(row = 0, column = 0)
         self.pos_label = ttk.Label(self.simplified_expression, text = "POS")
         self.pos_label.grid(row = 3, column = 0)
-        self.sop_output_expression = ttk.Entry(self.simplified_expression, width = 40)
+        self.sop_output_expression = ttk.Entry(self.simplified_expression, state = "readonly", width = 40)
         self.sop_output_expression.grid(row = 0, column = 1)
         self.sop_scrollbar = ttk.Scrollbar(self.simplified_expression, orient = "horizontal", command = self.sop_output_expression.xview)
         self.sop_output_expression.config(xscrollcommand = self.sop_scrollbar.set)
         self.sop_scrollbar.grid(row = 1, column = 1, sticky = "ew")
-        self.pos_output_expression = ttk.Entry(self.simplified_expression, width = 40)
+        self.pos_output_expression = ttk.Entry(self.simplified_expression, state = "readonly", width = 40)
         self.pos_output_expression.grid(row = 3, column = 1)
         self.pos_scrollbar = ttk.Scrollbar(self.simplified_expression, orient = "horizontal", command = self.pos_output_expression.xview)
         self.pos_output_expression.config(xscrollcommand = self.pos_scrollbar.set)
         self.pos_scrollbar.grid(row = 4, column = 1, sticky = "ew")
-        self.sop_input_button = ttk.Button(self.simplified_expression, text = "Set Input", command = self.sop_input())
+        self.sop_input_button = ttk.Button(self.simplified_expression, text = "Set Input", command = self.sop_input)
         self.sop_input_button.grid(row = 0, column = 2, padx = 5)
-        self.pos_input_button = ttk.Button(self.simplified_expression, text = "Set Input", command = self.pos_input())
+        self.pos_input_button = ttk.Button(self.simplified_expression, text = "Set Input", command = self.pos_input)
         self.pos_input_button.grid(row = 3, column = 2, padx = 5)
 
+    def clear_entry(self):
+        self.input_expression_entry.delete(0, "end")
+    
     def fill_table(self):
         self.table = get_table(self.input_expression_entry.get())
         if self.table == "expression_no_var":
@@ -460,6 +468,7 @@ class Interface:
                 var.configure(values = tuple(new))
 
     def change_kmap_var(self, event):
+        self.clear_implicants()
         self.update_kmap()
 
     def reset_kmap_var(self):
@@ -468,6 +477,10 @@ class Interface:
         self.kmap_column_var_combobox1.configure(values = self.alphabet)
         self.kmap_column_var_combobox2.configure(values = self.alphabet)
 
+    def change_kmap_min(self, event):
+        self.clear_implicants()
+        self.change_min(event)
+    
     def clear_kmap(self):
         self.clear_kmap_labels()
         self.reset_kmap_var()
@@ -491,9 +504,11 @@ class Interface:
         self.kmap_column_label2.configure(text = "")
         self.kmap_column_label3.configure(text = "")
         self.kmap_column_label4.configure(text = "")
-    
+
     def change_min(self, event):
-        if event.widget["text"] != "":
+        if event.widget["text"] == "":
+            print("Cell is currently not being used!")
+        else:
             if event.widget["text"] == "0":
                 event.widget.configure(text = "1")
             elif event.widget["text"] == "1":
@@ -507,18 +522,72 @@ class Interface:
         if self.kmap.table.num == 0:
             print("Karnaugh map needs at least one variable!")
         else:
-            self.sop_output_expression.insert(0, self.kmap.simplify())
-            self.kmap.mode = "pos"
-            self.pos_output_expression.insert(0, self.kmap.simplify())
+            self.sop_output_expression.configure(state = "normal")
+            self.pos_output_expression.configure(state = "normal")
 
+            sop = self.kmap.simplify()
+            self.sop_output_expression.insert(0, sop)
+
+            self.kmap.mode = "pos"
+
+            pos = self.kmap.simplify()
+            self.pos_output_expression.insert(0, pos)
+
+            self.sop_output_expression.configure(state = "readonly")
+            self.pos_output_expression.configure(state = "readonly")
+
+            products = parse_sop(sop)
+            sums = parse_pos(pos)
+
+            for term in products:
+                self.sop_table.insert("", "end", values = term)
+
+            for term in sums:
+                self.pos_table.insert("", "end", values = term.replace(" + ", "\ +\ "))
+        
+    def select_sop(self, event):
+        item = self.sop_table.selection()[0]
+        product = self.sop_table.item(item)["values"][0]
+        pos = self.kmap.product_to_implicant(parse_product(product))
+        self.highlight_kmap_groups(pos)
+
+    def select_pos(self, event):
+        item = self.pos_table.selection()[0]
+        sum = self.pos_table.item(item)["values"][0]
+        pos = self.kmap.sum_to_implicant(parse_sum(sum))
+        self.highlight_kmap_groups(pos)
+
+    def highlight_kmap_groups(self, pos):
+        self.clear_kmap_groups()
+
+        for term in pos:
+            self.kmap_min_list[term[0]][term[1]].configure(default = "active")
+
+    def clear_kmap_groups(self):
+        for row in self.kmap_min_list:
+            for min in row:
+                min.configure(default = "normal")
+    
     def clear_implicants(self):
+        self.clear_kmap_groups()
+
+        self.implicants_display.select(self.implicants_display.tabs()[0])
         self.sop_table.delete(*self.sop_table.get_children())
         self.pos_table.delete(*self.pos_table.get_children())
+
+        self.sop_output_expression.configure(state = "normal")
+        self.pos_output_expression.configure(state = "normal")
+
         self.sop_output_expression.delete(0, "end")
         self.pos_output_expression.delete(0, "end")
 
+        self.sop_output_expression.configure(state = "readonly")
+        self.pos_output_expression.configure(state = "readonly")
+
     def sop_input(self):
+        self.clear_entry()
         self.input_expression_entry.insert(0, self.sop_output_expression.get())
 
     def pos_input(self):
+        self.clear_entry()
         self.input_expression_entry.insert(0, self.pos_output_expression.get())
