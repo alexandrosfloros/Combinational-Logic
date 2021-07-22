@@ -311,7 +311,11 @@ def parse_pos(pos):
     pos = pos.replace(")(", "-|").replace("(", "-|").replace(")", "-|").split("-")
     for n, term in enumerate(pos):
         if "+" not in term:
-            pos[n] = "|".join(term)
+            pos[n] = ""
+            for char in term:
+                pos[n] += char
+                if char != "!":
+                    pos[n] += "|"
     pos = "".join(pos).split("|")
     for term in pos:
         if term == "":

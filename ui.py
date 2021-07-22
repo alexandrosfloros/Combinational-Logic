@@ -542,16 +542,20 @@ class Interface:
                 self.pos_table.insert("", "end", values = term.replace(" + ", "\ +\ "))
         
     def select_sop(self, event):
-        item = self.sop_table.selection()[0]
-        product = str(self.sop_table.item(item)["values"][0])
-        pos = self.kmap.product_to_implicant(parse_product(product))
-        self.highlight_kmap_groups(pos)
+        items = self.sop_table.selection()
+        if len(items) != 0:
+            item = items[0]
+            product = str(self.sop_table.item(item)["values"][0])
+            pos = self.kmap.product_to_implicant(parse_product(product))
+            self.highlight_kmap_groups(pos)
 
     def select_pos(self, event):
-        item = self.pos_table.selection()[0]
-        sum = str(self.pos_table.item(item)["values"][0])
-        pos = self.kmap.sum_to_implicant(parse_sum(sum))
-        self.highlight_kmap_groups(pos)
+        items = self.pos_table.selection()
+        if len(items) != 0:
+            item = items[0]
+            sum = str(self.pos_table.item(item)["values"][0])
+            pos = self.kmap.sum_to_implicant(parse_sum(sum))
+            self.highlight_kmap_groups(pos)
 
     def highlight_kmap_groups(self, pos):
         self.clear_kmap_groups()
