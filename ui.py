@@ -1,5 +1,6 @@
 import string
 import tkinter as tk
+from tkinter import messagebox
 from tkinter import ttk
 from logic import *
 
@@ -196,11 +197,11 @@ class Interface:
     def fill_table(self):
         self.table = get_table(self.input_expression_entry.get())
         if self.table == "expression_no_var":
-            print("Expression needs at least one variable!")
+            self.error("expression_no_var")
         elif self.table == "expression_many_var":
-            print("Expression cannot have more than four variables!")
+            self.error("expression_many_var")
         elif self.table == "expression_invalid":
-            print("Expression is invalid!")
+            self.error("expression_invalid")
         else:
             self.clear_table()
 
@@ -331,7 +332,7 @@ class Interface:
     def fill_kmap(self):
         self.update_table()
         if self.table.num == 0:
-            print("Truth table needs at least one variable!")
+            self.error("table_no_var")
         else:
             self.kmap = Kmap(self.table)
             self.clear_kmap()
@@ -501,22 +502,19 @@ class Interface:
         self.kmap_column_label4.configure(text = "")
 
     def change_min(self, event):
-        if event.widget["text"] == "":
-            print("Cell is currently not being used!")
-        else:
-            if event.widget["text"] == "0":
-                event.widget.configure(text = "1")
-            elif event.widget["text"] == "1":
-                event.widget.configure(text = "X")
-            else:
-                event.widget.configure(text = "0")
+        if event.widget["text"] == "0":
+            event.widget.configure(text = "1")
+        elif event.widget["text"] == "1":
+            event.widget.configure(text = "X")
+        elif event.widget["text"] == "X":
+            event.widget.configure(text = "0")
     
     def get_implicants(self):
         self.update_kmap()
         self.clear_implicants()
         
         if self.kmap.table.num == 0:
-            print("Karnaugh map needs at least one variable!")
+            self.error("kmap_no_var")
         else:
             self.sop_output_expression.configure(state = "normal")
             self.pos_output_expression.configure(state = "normal")
@@ -591,3 +589,15 @@ class Interface:
     def pos_input(self):
         self.clear_entry()
         self.input_expression_entry.insert(0, self.pos_output_expression.get())
+
+    def error(self, id):
+        if id == "expression_no_var":
+            messagebox.showerror("Could not fill table!", "Expression needs at least one variable!")
+        elif id == "expression_many_var":
+            messagebox.showerror("Could not fill table!", "Expression cannot have more than four variables!")
+        elif id == "expression_invalid":
+            messagebox.showerror("Could not fill table!", "Expression is invalid!")
+        elif id == "table_no_var":
+            messagebox.showerror("Could not fill kmap!", "Truth table needs at least one variable!")
+        elif id == "kmap_no_var":
+            messagebox.showerror("Could not fill kmap!", "Karnaugh map needs at least one variable!")
