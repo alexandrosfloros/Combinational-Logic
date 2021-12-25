@@ -196,12 +196,9 @@ class Interface:
     
     def fill_table(self):
         self.table = get_table(self.input_expression_entry.get())
-        if self.table == "expression_no_var":
-            self.error("expression_no_var")
-        elif self.table == "expression_many_var":
-            self.error("expression_many_var")
-        elif self.table == "expression_invalid":
-            self.error("expression_invalid")
+        
+        if isinstance(self.table, str):
+            self.error(self.table)
         else:
             self.clear_table()
 
@@ -331,6 +328,7 @@ class Interface:
 
     def fill_kmap(self):
         self.update_table()
+        
         if self.table.num == 0:
             self.error("table_no_var")
         else:
@@ -541,6 +539,7 @@ class Interface:
         
     def select_sop(self, event):
         items = self.sop_table.selection()
+        
         if len(items) != 0:
             item = items[0]
             product = str(self.sop_table.item(item)["values"][0])
@@ -549,6 +548,7 @@ class Interface:
 
     def select_pos(self, event):
         items = self.pos_table.selection()
+        
         if len(items) != 0:
             item = items[0]
             sum = str(self.pos_table.item(item)["values"][0])
