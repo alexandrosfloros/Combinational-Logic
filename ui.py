@@ -596,7 +596,7 @@ class Interface:
         elif id == "expression_many_var":
             messagebox.showerror("Could not fill table!", "Expression cannot have more than four variables!")
         elif id == "expression_invalid":
-            messagebox.showerror("Could not fill table!", "Expression is invalid!")
+            messagebox.showerror("Could not fill table!", "Expression is invalid!\nSupported characters are English letters, and symbols \"+\", \"*\", \"(\" and \")\".")
         elif id == "table_no_var":
             messagebox.showerror("Could not fill kmap!", "Truth table needs at least one variable!")
         elif id == "kmap_no_var":
