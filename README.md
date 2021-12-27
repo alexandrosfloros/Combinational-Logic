@@ -1,6 +1,6 @@
 # Overview
 
-This is an application used to analyse logic circuits and help solve a variety of problems in combinational logic using a different range of inputs for up to 4 variables.
+This is an application used to analyse logic circuits and help solve a variety of problems in combinational logic using different inputs for up to 4 variables.
 
 # Motivation
 
