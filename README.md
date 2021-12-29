@@ -4,7 +4,7 @@ This is an application used to analyse logic circuits and help solve a variety o
 
 # Motivation
 
-The idea behind this project came during my revision for a digital electronics exam. Quite often, the problems encountered involved tedious, time-consuming calculations and observations, which often had to be checked multiple times to ensure there were no errors. After successfully making a script to read boolean expressions and build a truth table, this small experimental project expanded to a user-friendly GUI application with multiple functionalities, accepting a variety of user inputs. Unfortunately, it was finished shortly after the exams had ended!
+The idea behind this project came during my revision for a digital electronics exam. Quite often, the problems encountered involved tedious, time-consuming calculations and observations, which often had to be checked multiple times to ensure there were no errors. After successfully making a script to read Boolean expressions and build a truth table, this small experimental project expanded to a user-friendly GUI application with multiple functionalities, accepting a variety of user inputs. Unfortunately, it was finished shortly after the exams had ended!
 
 # Features
 
@@ -27,7 +27,7 @@ Other features:
 
 ## Boolean expression
 
-An input boolean expression of up to 4 variables can be inserted to be parsed and converted to a truth table. Any letters from the English alphabet, lowercase and uppercase, can be used. The expression may also use the following characters: ``+``, ``*``, ``(`` and ``)``. If there are two or more letters next to each other (e.g., ``AB``), the program considers that a product. Spaces are ignored.
+An input Boolean expression of up to 4 variables can be inserted to be parsed and converted to a truth table. Any letters from the English alphabet, lowercase and uppercase, can be used. The expression may also use the following characters: ``+``, ``*``, ``(`` and ``)``. If there are two or more letters next to each other (e.g., ``AB``), the program considers that a product. Spaces are ignored.
 
 ## Truth table
 
