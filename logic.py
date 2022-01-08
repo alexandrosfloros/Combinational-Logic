@@ -256,7 +256,7 @@ class Implicant:
                 self.term.append("!" + self.kmap.columns[1])
 
     def get_common(self):
-        self.common = ""
+        self.common = []
         for m in self.terms:
             if m[0] == 0:
                 value = "00"
@@ -274,7 +274,7 @@ class Implicant:
                 value += "11"
             else:
                 value += "10"
-            if self.common == "":
+            if not self.common:
                 self.common = list(value)
             for c in range(len(self.common)):
                 if value[c] != self.common[c]:
