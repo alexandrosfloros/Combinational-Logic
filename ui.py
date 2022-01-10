@@ -17,7 +17,7 @@ class Interface:
             self.binary.append(x)
 
         self.master = master
-        self.master.title("Combinational Logic")
+        self.master.title("Logic Circuit Solver")
         self.master.geometry("475x700")
         self.master.resizable(True, True)
         self.master.iconbitmap("logo.ico")
