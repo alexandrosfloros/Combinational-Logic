@@ -23,7 +23,11 @@ Other features:
 * Support for up to 4 variables
 * Robust to problematic inputs
 
-# Use
+# How to use
+
+## Execution
+
+The file used to run the project is ``main.py``.
 
 ## Boolean expression
 
