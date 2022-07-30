@@ -1,7 +1,3 @@
-# Overview
-
-This is an application used to analyse logic circuits and help solve a variety of problems in combinational logic, supporting different inputs and up to 4 variables.
-
 # Motivation
 
 The idea behind this project came during my revision for a digital electronics exam. Quite often, the problems encountered involved tedious, time-consuming calculations and observations, which often had to be checked multiple times to ensure there were no errors. After successfully making a script to read Boolean expressions and build a truth table, this small experimental project expanded to a user-friendly GUI application with multiple functionalities, accepting a variety of user inputs. Unfortunately, it was finished shortly after the exams had ended!
