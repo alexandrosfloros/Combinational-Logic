@@ -4,14 +4,14 @@ The idea behind this project came during my revision for a digital electronics e
 
 # Features
 
-Main features:
+Main Features:
 
 * Creating truth table from input expression
 * Creating karnaugh map from input truth table
 * Evaluating implicants from input karnaugh map
 * Obtaining minimised SOP and POS expressions
 
-Other features:
+Other Features:
 
 * Flexible choice of variables
 * Flexible parsing of expression input
@@ -19,20 +19,20 @@ Other features:
 * Support for up to 4 variables
 * Robust to problematic inputs
 
-# How to use
+# How to Use
 
 ## Execution
 
 The file used to run the project is ``main.py``.
 
-## Boolean expression
+## Boolean Expression
 
 An input Boolean expression of up to 4 variables can be inserted to be parsed and converted to a truth table. Any letters from the English alphabet, lowercase and uppercase, can be used. The expression may also use the following characters: ``+``, ``*``, ``(`` and ``)``. If there are two or more letters next to each other (e.g., ``AB``), the program considers that a product. Spaces are ignored.
 
-## Truth table
+## Truth Table
 
 A truth table can be filled in to be converted to a karnaugh map. The variables and minterms can either be chosen manually or, alternatively, obtained from the previous expresion. The output of each of the different rows can be ``0``, ``1`` or ``X``, which corresponds to the "don't care term". The number of variables may also be adjusted to be less than 4.
 
-## Karnaugh map
+## Karnaugh Map
 
 A karnaugh map can be filled in to be solved. The variables and minterms can either be chosen manually or, alternatively, obtained from the previous truth table. The value of each of the different cells can be ``0``, ``1`` or ``X``, which corresponds to the "don't care term". The number of variables may also be adjusted to be less than 4. Once the karnaugh map is solved, the SOP (sum of products) and POS (product of sums) minimised expressions can be viewed as well as the implicants they consist of, and highlighted in the karnaugh map.
