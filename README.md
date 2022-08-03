@@ -7,8 +7,8 @@ The idea behind this project came during my revision for a digital electronics e
 Main Features:
 
 * Creating truth table from input expression
-* Creating karnaugh map from input truth table
-* Evaluating implicants from input karnaugh map
+* Creating Karnaugh map from input truth table
+* Evaluating implicants from input Karnaugh map
 * Obtaining minimised SOP and POS expressions
 
 Other Features:
@@ -31,8 +31,8 @@ An input Boolean expression of up to 4 variables can be inserted to be parsed an
 
 ## Truth Table
 
-A truth table can be filled in to be converted to a karnaugh map. The variables and minterms can either be chosen manually or, alternatively, obtained from the previous expresion. The output of each of the different rows can be ``0``, ``1`` or ``X``, which corresponds to the "don't care term". The number of variables may also be adjusted to be less than 4.
+A truth table can be filled in to be converted to a Karnaugh map. The variables and minterms can either be chosen manually or, alternatively, obtained from the previous expresion. The output of each of the different rows can be ``0``, ``1`` or ``X``, which corresponds to the "don't care term". The number of variables may also be adjusted to be less than 4.
 
 ## Karnaugh Map
 
-A karnaugh map can be filled in to be solved. The variables and minterms can either be chosen manually or, alternatively, obtained from the previous truth table. The value of each of the different cells can be ``0``, ``1`` or ``X``, which corresponds to the "don't care term". The number of variables may also be adjusted to be less than 4. Once the karnaugh map is solved, the SOP (sum of products) and POS (product of sums) minimised expressions can be viewed as well as the implicants they consist of, and highlighted in the karnaugh map.
+A Karnaugh map can be filled in to be solved. The variables and minterms can either be chosen manually or, alternatively, obtained from the previous truth table. The value of each of the different cells can be ``0``, ``1`` or ``X``, which corresponds to the "don't care term". The number of variables may also be adjusted to be less than 4. Once the Karnaugh map is solved, the SOP (sum of products) and POS (product of sums) minimised expressions can be viewed as well as the implicants they consist of, and highlighted in the Karnaugh map.
