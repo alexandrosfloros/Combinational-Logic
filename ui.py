@@ -92,7 +92,7 @@ class Interface:
             min.bind("<Button-1>", self.change_min)
             self.table_min_list.append(min)
         
-        self.fill_kmap_button = ttk.Button(self.table_buttons, text = "Fill Kmap", command = self.fill_kmap)
+        self.fill_kmap_button = ttk.Button(self.table_buttons, text = "Fill K-map", command = self.fill_kmap)
         self.fill_kmap_button.grid(row = 0, column = 0, padx = 2)
         self.clear_table_button = ttk.Button(self.table_buttons, text = "Clear Table", command = self.clear_table)
         self.clear_table_button.grid(row = 0, column = 1, padx = 2)
@@ -144,8 +144,8 @@ class Interface:
 
             self.kmap_min_list.append(kmap_min_row)
         
-        self.evaluate_button = ttk.Button(self.kmap_buttons, text = "Evaluate", command = self.get_implicants)
-        self.evaluate_button.grid(row = 0, column = 0, padx = 2)
+        self.solve_button = ttk.Button(self.kmap_buttons, text = "Solve", command = self.get_implicants)
+        self.solve_button.grid(row = 0, column = 0, padx = 2)
         self.clear_kmap_button = ttk.Button(self.kmap_buttons, text = "Clear Kmap", command = self.clear_kmap)
         self.clear_kmap_button.grid(row = 0, column = 1, padx = 2)
 
@@ -597,6 +597,6 @@ class Interface:
         elif id == "expression_invalid":
             messagebox.showerror("Could not fill table!", "Expression is invalid!\nSupported characters are English letters, and symbols \"+\", \"*\", \"(\" and \")\".")
         elif id == "table_no_var":
-            messagebox.showerror("Could not fill kmap!", "Truth table needs at least one variable!")
+            messagebox.showerror("Could not fill K-map!", "Truth table needs at least one variable!")
         elif id == "kmap_no_var":
-            messagebox.showerror("Could not fill kmap!", "Karnaugh map needs at least one variable!")
+            messagebox.showerror("Could not solve K-map!", "Karnaugh map needs at least one variable!")
