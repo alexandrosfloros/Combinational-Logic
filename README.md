@@ -27,7 +27,7 @@ The file used to run the project is ``main.py``.
 
 ## Boolean Expression
 
-An input Boolean expression of up to 4 variables can be inserted to be parsed and converted to a truth table. Any letters from the English alphabet, lowercase and uppercase, can be used. The expression may also use the following characters: ``+``, ``*``, ``(`` and ``)``. If there are two or more letters next to each other (e.g., ``AB``), the program considers that a product. Spaces are ignored.
+An input Boolean expression of up to 4 variables can be inserted to be parsed and converted to a truth table. Any letters from the English alphabet, lowercase and uppercase, can be used. The expression may also use the following characters: ``+``, ``*``, ``(`` and ``)``. If there are two or more letters next to each other (e.g. ``AB``), the program considers that a product. Spaces are ignored.
 
 ## Truth Table
 
