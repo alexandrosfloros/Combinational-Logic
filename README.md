@@ -27,7 +27,7 @@ The file used to run the project is ``main.py``.
 
 ## Boolean Expression
 
-An input Boolean expression of up to 4 variables can be inserted to be parsed and converted to a truth table. Any letters from the English alphabet, lowercase and uppercase, can be used. The expression may also use the following characters: ``+``, ``*``, ``(`` and ``)``. If there are two or more letters next to each other (e.g. ``AB``), the program considers that a product. Spaces are ignored.
+An input Boolean expression of up to 4 variables can be inserted to be parsed and converted to a truth table. Any letters from the English alphabet, lowercase and uppercase, can be used. The expression may also use the following characters: ``+``, ``*``, ``(`` and ``)``. If there are two or more letters next to each other (e.g. ``AB``), the program reads that as a product. Any spaces appearing in the expression are ignored.
 
 ## Truth Table
 
@@ -35,4 +35,4 @@ A truth table can be filled in to be converted to a Karnaugh map. The variables 
 
 ## Karnaugh Map
 
-A Karnaugh map can be filled in to be solved. The variables and minterms can either be chosen manually or, alternatively, obtained from the previous truth table. The value of each of the different cells can be ``0``, ``1`` or ``X``, which corresponds to the "don't care term". The number of variables may also be adjusted to be less than 4. Once the Karnaugh map is solved, the SOP (sum of products) and POS (product of sums) minimised expressions can be viewed as well as the implicants they consist of, and highlighted in the Karnaugh map.
+A Karnaugh map can be filled in to be solved. The variables and minterms can either be chosen manually or, alternatively, obtained from the previous truth table. The value of each of the different cells can be ``0``, ``1`` or ``X``, which corresponds to the "don't care term". The number of variables may also be adjusted to be less than 4. Once the Karnaugh map is solved, the SOP (sum of products) and POS (product of sums) minimised expressions can be viewed, as well as the implicants they consist of, and highlighted in the Karnaugh map.
