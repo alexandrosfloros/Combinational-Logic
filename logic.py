@@ -1,11 +1,13 @@
 import itertools as it
 import numpy as np
 
+
 class TruthTable:
     def __init__(self, var, values):
         self.var = var
         self.values = values
         self.num = len(self.var)
+
 
 class Kmap:
     def __init__(self, table):
@@ -36,15 +38,26 @@ class Kmap:
         terms = []
         if self.mode == "sop":
             for i in self.implicants:
-                terms.append("".join(sorted(i.term, key = lambda x: x.replace("!", ""))))
-            output = " + ".join(sorted(terms, key = lambda x: x.replace("!", "")))
+                terms.append("".join(sorted(i.term, key=lambda x: x.replace("!", ""))))
+            output = " + ".join(sorted(terms, key=lambda x: x.replace("!", "")))
         else:
             for i in self.implicants:
                 if len(i.term) == 1:
-                    terms.append(" + ".join(sorted(i.term, key = lambda x: x.replace("!", ""))))
+                    terms.append(
+                        " + ".join(sorted(i.term, key=lambda x: x.replace("!", "")))
+                    )
                 else:
-                    terms.append("(" + " + ".join(sorted(i.term, key = lambda x: x.replace("!", ""))) + ")")
-            output = "".join(sorted(terms, key = lambda x: x.replace("!", "").replace("(", "").replace(")", "")))
+                    terms.append(
+                        "("
+                        + " + ".join(sorted(i.term, key=lambda x: x.replace("!", "")))
+                        + ")"
+                    )
+            output = "".join(
+                sorted(
+                    terms,
+                    key=lambda x: x.replace("!", "").replace("(", "").replace(")", ""),
+                )
+            )
         return output
 
     def get_implicants(self):
@@ -70,7 +83,7 @@ class Kmap:
                         if self.twoxtwo(row, column):
                             self.add_implicant(self.twoxtwo(row, column))
         self.implicants = self.groups.copy()
-        self.groups.sort(key = lambda i: len(i.terms))
+        self.groups.sort(key=lambda i: len(i.terms))
         for i in self.groups:
             other_groups = map(set, (j.terms for j in self.implicants if i != j))
             if len(self.implicants) > 1:
@@ -94,43 +107,75 @@ class Kmap:
 
     def onextwo(self, row, column):
         if self.values.shape[1] > 1:
-            if self.onexone(row, column) and self.onexone(row, (column + 1) % self.values.shape[1]):
-                return self.onexone(row, column), self.onexone(row, (column + 1) % self.values.shape[1])
+            if self.onexone(row, column) and self.onexone(
+                row, (column + 1) % self.values.shape[1]
+            ):
+                return self.onexone(row, column), self.onexone(
+                    row, (column + 1) % self.values.shape[1]
+                )
 
     def onexfour(self, row, column):
         if self.values.shape[1] > 3:
-            if self.onextwo(row, column) and self.onextwo(row, (column + 2) % self.values.shape[1]):
-                return self.onextwo(row, column) + self.onextwo(row, (column + 2) % self.values.shape[1])
+            if self.onextwo(row, column) and self.onextwo(
+                row, (column + 2) % self.values.shape[1]
+            ):
+                return self.onextwo(row, column) + self.onextwo(
+                    row, (column + 2) % self.values.shape[1]
+                )
 
     def twoxone(self, row, column):
         if self.values.shape[0] > 1:
-            if self.onexone(row, column) and self.onexone((row + 1) % self.values.shape[0], column):
-                return self.onexone(row, column), self.onexone((row + 1) % self.values.shape[0], column)
+            if self.onexone(row, column) and self.onexone(
+                (row + 1) % self.values.shape[0], column
+            ):
+                return self.onexone(row, column), self.onexone(
+                    (row + 1) % self.values.shape[0], column
+                )
 
     def twoxtwo(self, row, column):
         if self.values.shape[0] > 1 and self.values.shape[1] > 1:
-            if self.onextwo(row, column) and self.onextwo((row + 1) % self.values.shape[0], column):
-                return self.onextwo(row, column) + self.onextwo((row + 1) % self.values.shape[0], column)
+            if self.onextwo(row, column) and self.onextwo(
+                (row + 1) % self.values.shape[0], column
+            ):
+                return self.onextwo(row, column) + self.onextwo(
+                    (row + 1) % self.values.shape[0], column
+                )
 
     def twoxfour(self, row, column):
         if self.values.shape[0] > 1 and self.values.shape[1] > 3:
-            if self.twoxtwo(row, column) and self.twoxtwo(row, (column + 2) % self.values.shape[1]):
-                return self.twoxtwo(row, column) + self.twoxtwo(row, (column + 2) % self.values.shape[1])
+            if self.twoxtwo(row, column) and self.twoxtwo(
+                row, (column + 2) % self.values.shape[1]
+            ):
+                return self.twoxtwo(row, column) + self.twoxtwo(
+                    row, (column + 2) % self.values.shape[1]
+                )
 
     def fourxone(self, row, column):
         if self.values.shape[0] > 3:
-            if self.twoxone(row, column) and self.twoxone((row + 2) % self.values.shape[0], column):
-                return self.twoxone(row, column) + self.twoxone((row + 2) % self.values.shape[0], column)
+            if self.twoxone(row, column) and self.twoxone(
+                (row + 2) % self.values.shape[0], column
+            ):
+                return self.twoxone(row, column) + self.twoxone(
+                    (row + 2) % self.values.shape[0], column
+                )
 
     def fourxtwo(self, row, column):
         if self.values.shape[0] > 3 and self.values.shape[1] > 1:
-            if self.fourxone(row, column) and self.fourxone(row, (column + 1) % self.values.shape[1]):
-                return self.fourxone(row, column) + self.fourxone(row, (column + 1) % self.values.shape[1])
+            if self.fourxone(row, column) and self.fourxone(
+                row, (column + 1) % self.values.shape[1]
+            ):
+                return self.fourxone(row, column) + self.fourxone(
+                    row, (column + 1) % self.values.shape[1]
+                )
 
     def fourxfour(self, row, column):
         if self.values.shape[0] > 3 and self.values.shape[1] > 3:
-            if self.twoxfour(row, column) and self.twoxfour((row + 2) % self.values.shape[0], column):
-                return self.twoxfour(row, column) + self.twoxfour((row + 2) % self.values.shape[0], column)
+            if self.twoxfour(row, column) and self.twoxfour(
+                (row + 2) % self.values.shape[0], column
+            ):
+                return self.twoxfour(row, column) + self.twoxfour(
+                    (row + 2) % self.values.shape[0], column
+                )
 
     def product_to_implicant(self, term):
         self.mode = "sop"
@@ -145,6 +190,7 @@ class Kmap:
         for i in self.implicants:
             if set(term) == set(i.term):
                 return i.terms
+
 
 class Implicant:
     def __init__(self, kmap, terms):
@@ -280,12 +326,18 @@ class Implicant:
                 if value[c] != self.common[c]:
                     self.common[c] = "-"
 
+
 def get_table(expression):
     values = np.array([], str)
     var = ""
     expression = expression.replace(" ", "").replace("*", "")
     expression = "*".join(expression)
-    expression = expression.replace("!*", "!").replace("*+*", "+").replace("(*", "(").replace("*)", ")")
+    expression = (
+        expression.replace("!*", "!")
+        .replace("*+*", "+")
+        .replace("(*", "(")
+        .replace("*)", ")")
+    )
     for char in expression:
         if char.isalpha():
             if char not in var:
@@ -296,16 +348,32 @@ def get_table(expression):
         return "expression_no_var"
     elif num > 4:
         return "expression_many_var"
-    for x in it.product("01", repeat = num):
+    for x in it.product("01", repeat=num):
         try:
-            value = str(int(eval(expression.replace(var[(num - 4) % num], x[(num - 4) % num]).replace(var[(num - 3) % num], x[(num - 3) % num]).replace(var[(num - 2) % num], x[(num - 2) % num]).replace(var[num - 1], x[num - 1]).replace("0", " False ").replace("1", " True ").replace("!", " not ").replace("+", " or ").replace("*", " and "))))
+            value = str(
+                int(
+                    eval(
+                        expression.replace(var[(num - 4) % num], x[(num - 4) % num])
+                        .replace(var[(num - 3) % num], x[(num - 3) % num])
+                        .replace(var[(num - 2) % num], x[(num - 2) % num])
+                        .replace(var[num - 1], x[num - 1])
+                        .replace("0", " False ")
+                        .replace("1", " True ")
+                        .replace("!", " not ")
+                        .replace("+", " or ")
+                        .replace("*", " and ")
+                    )
+                )
+            )
         except:
             return "expression_invalid"
         values = np.append(values, value)
     return TruthTable(var, values)
 
+
 def parse_sop(sop):
     return sop.split(" + ")
+
 
 def parse_pos(pos):
     pos = pos.replace(")(", "-|").replace("(", "-|").replace(")", "-|").split("-")
@@ -322,6 +390,7 @@ def parse_pos(pos):
             pos.remove(term)
     return pos
 
+
 def parse_product(product):
     out = []
     count = 0
@@ -333,6 +402,7 @@ def parse_product(product):
             out.append(product[count])
         count += 1
     return out
+
 
 def parse_sum(sum):
     return sum.split(" + ")
