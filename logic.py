@@ -13,19 +13,23 @@ class Kmap:
     def __init__(self, table):
         self.table = table
         self.mode = "sop"
+
         if self.table.num == 1:
             self.values = np.reshape(self.table.values, (2, 1))
             self.rows = self.table.var
             self.columns = ""
+
         elif self.table.num == 2:
             self.values = np.reshape(self.table.values, (2, 2))
             self.rows = self.table.var[0]
             self.columns = self.table.var[1]
+
         elif self.table.num == 3:
             self.values = np.reshape(self.table.values, (2, 4))
             self.values[:, [2, 3]] = self.values[:, [3, 2]]
             self.rows = self.table.var[0]
             self.columns = self.table.var[1:]
+
         elif self.table.num == 4:
             self.values = np.reshape(self.table.values, (4, 4))
             self.values[:, [2, 3]] = self.values[:, [3, 2]]
@@ -36,56 +40,74 @@ class Kmap:
     def simplify(self):
         self.get_implicants()
         terms = []
+
         if self.mode == "sop":
             for i in self.implicants:
                 terms.append("".join(sorted(i.term, key=lambda x: x.replace("!", ""))))
+
             output = " + ".join(sorted(terms, key=lambda x: x.replace("!", "")))
+
         else:
             for i in self.implicants:
                 if len(i.term) == 1:
                     terms.append(
                         " + ".join(sorted(i.term, key=lambda x: x.replace("!", "")))
                     )
+
                 else:
                     terms.append(
                         "("
                         + " + ".join(sorted(i.term, key=lambda x: x.replace("!", "")))
                         + ")"
                     )
+
             output = "".join(
                 sorted(
                     terms,
                     key=lambda x: x.replace("!", "").replace("(", "").replace(")", ""),
                 )
             )
+
         return output
 
     def get_implicants(self):
         self.groups = []
+
         for row in range(len(self.values)):
             for column in range(len(self.values[row])):
                 if self.onexone(row, column):
                     self.add_implicant(self.onexone(row, column))
+
                     if self.onextwo(row, column):
                         self.add_implicant(self.onextwo(row, column))
+
                         if self.onexfour(row, column):
                             self.add_implicant(self.onexfour(row, column))
+
                             if self.twoxfour(row, column):
                                 self.add_implicant(self.twoxfour(row, column))
+
                     if self.twoxone(row, column):
                         self.add_implicant(self.twoxone(row, column))
+
                         if self.fourxone(row, column):
                             self.add_implicant(self.fourxone(row, column))
+
                             if self.fourxtwo(row, column):
                                 self.add_implicant(self.fourxtwo(row, column))
+
                                 if self.fourxfour(row, column):
                                     self.add_implicant(self.fourxfour(row, column))
+
                         if self.twoxtwo(row, column):
                             self.add_implicant(self.twoxtwo(row, column))
+
         self.implicants = self.groups.copy()
         self.groups.sort(key=lambda i: len(i.terms))
+
         for i in self.groups:
             other_groups = map(set, (j.terms for j in self.implicants if i != j))
+
             if len(self.implicants) > 1:
                 if set(i.terms).issubset(set.union(*other_groups)):
                     self.implicants.remove(i)
@@ -93,6 +115,7 @@ class Kmap:
     def add_implicant(self, terms):
         if isinstance(terms[0], int):
             self.groups.append(Implicant(self, (terms,)))
+
         else:
             if not any(set(i.terms) == (set(terms)) for i in self.groups):
                 self.groups.append(Implicant(self, terms))
@@ -101,6 +124,7 @@ class Kmap:
         if self.mode == "sop":
             if self.values[row][column] in ("1", "X"):
                 return row, column
+
         else:
             if self.values[row][column] in ("0", "X"):
                 return row, column
@@ -180,6 +204,7 @@ class Kmap:
     def product_to_implicant(self, term):
         self.mode = "sop"
         self.simplify()
+
         for i in self.implicants:
             if set(term) == set(i.term):
                 return i.terms
@@ -187,6 +212,7 @@ class Kmap:
     def sum_to_implicant(self, term):
         self.mode = "pos"
         self.simplify()
+
         for i in self.implicants:
             if set(term) == set(i.term):
                 return i.terms
@@ -197,13 +223,17 @@ class Implicant:
         self.kmap = kmap
         self.terms = terms
         self.term = []
+
         if all(value == "0" for value in self.kmap.table.values):
             self.term.append("0")
+
         elif all(value in ("1", "X") for value in self.kmap.table.values):
             self.term.append("1")
+
         else:
             if self.kmap.mode == "sop":
                 self.get_product()
+
             else:
                 self.get_sum()
 
@@ -212,116 +242,165 @@ class Implicant:
         if self.kmap.table.num == 1:
             if self.common[1] == "0":
                 self.term.append("!" + self.kmap.rows)
+
             elif self.common[1] == "1":
                 self.term.append(self.kmap.rows)
+
         elif self.kmap.table.num == 2:
             if self.common[1] == "0":
                 self.term.append("!" + self.kmap.rows)
+
             elif self.common[1] == "1":
                 self.term.append(self.kmap.rows)
+
             if self.common[3] == "0":
                 self.term.append("!" + self.kmap.columns)
+
             elif self.common[3] == "1":
                 self.term.append(self.kmap.columns)
+
         elif self.kmap.table.num == 3:
             if self.common[1] == "0":
                 self.term.append("!" + self.kmap.rows)
+
             elif self.common[1] == "1":
                 self.term.append(self.kmap.rows)
+
             if self.common[2] == "0":
                 self.term.append("!" + self.kmap.columns[0])
+
             elif self.common[2] == "1":
                 self.term.append(self.kmap.columns[0])
+
             if self.common[3] == "0":
                 self.term.append("!" + self.kmap.columns[1])
+
             elif self.common[3] == "1":
                 self.term.append(self.kmap.columns[1])
+
         else:
             if self.common[0] == "0":
                 self.term.append("!" + self.kmap.rows[0])
+
             elif self.common[0] == "1":
                 self.term.append(self.kmap.rows[0])
+
             if self.common[1] == "0":
                 self.term.append("!" + self.kmap.rows[1])
+
             elif self.common[1] == "1":
                 self.term.append(self.kmap.rows[1])
+
             if self.common[2] == "0":
                 self.term.append("!" + self.kmap.columns[0])
+
             elif self.common[2] == "1":
                 self.term.append(self.kmap.columns[0])
+
             if self.common[3] == "0":
                 self.term.append("!" + self.kmap.columns[1])
+
             elif self.common[3] == "1":
                 self.term.append(self.kmap.columns[1])
 
     def get_sum(self):
         self.get_common()
+
         if self.kmap.table.num == 1:
             if self.common[1] == "0":
                 self.term.append(self.kmap.rows)
+
             elif self.common[1] == "1":
                 self.term.append("!" + self.kmap.rows)
+
         elif self.kmap.table.num == 2:
             if self.common[1] == "0":
                 self.term.append(self.kmap.rows)
+
             elif self.common[1] == "1":
                 self.term.append("!" + self.kmap.rows)
+
             if self.common[3] == "0":
                 self.term.append(self.kmap.columns)
+
             elif self.common[3] == "1":
                 self.term.append("!" + self.kmap.columns)
+
         elif self.kmap.table.num == 3:
             if self.common[1] == "0":
                 self.term.append(self.kmap.rows)
+
             elif self.common[1] == "1":
                 self.term.append("!" + self.kmap.rows)
+
             if self.common[2] == "0":
                 self.term.append(self.kmap.columns[0])
+
             elif self.common[2] == "1":
                 self.term.append("!" + self.kmap.columns[0])
+
             if self.common[3] == "0":
                 self.term.append(self.kmap.columns[1])
+
             elif self.common[3] == "1":
                 self.term.append("!" + self.kmap.columns[1])
+
         else:
             if self.common[0] == "0":
                 self.term.append(self.kmap.rows[0])
+
             elif self.common[0] == "1":
                 self.term.append("!" + self.kmap.rows[0])
+
             if self.common[1] == "0":
                 self.term.append(self.kmap.rows[1])
+
             elif self.common[1] == "1":
                 self.term.append("!" + self.kmap.rows[1])
+
             if self.common[2] == "0":
                 self.term.append(self.kmap.columns[0])
+
             elif self.common[2] == "1":
                 self.term.append("!" + self.kmap.columns[0])
+
             if self.common[3] == "0":
                 self.term.append(self.kmap.columns[1])
+
             elif self.common[3] == "1":
                 self.term.append("!" + self.kmap.columns[1])
 
     def get_common(self):
         self.common = []
+
         for m in self.terms:
             if m[0] == 0:
                 value = "00"
+
             elif m[0] == 1:
                 value = "01"
+
             elif m[0] == 2:
                 value = "11"
+
             else:
                 value = "10"
+
             if m[1] == 0:
                 value += "00"
+
             elif m[1] == 1:
                 value += "01"
+
             elif m[1] == 2:
                 value += "11"
+
             else:
                 value += "10"
+
             if not self.common:
                 self.common = list(value)
+
             for c in range(len(self.common)):
                 if value[c] != self.common[c]:
                     self.common[c] = "-"
@@ -338,16 +417,21 @@ def get_table(expression):
         .replace("(*", "(")
         .replace("*)", ")")
     )
+
     for char in expression:
         if char.isalpha():
             if char not in var:
                 var += char
+
     var = "".join(sorted(var))
     num = len(var)
+
     if num == 0:
         return "expression_no_var"
+
     elif num > 4:
         return "expression_many_var"
+
     for x in it.product("01", repeat=num):
         try:
             value = str(
@@ -365,9 +449,12 @@ def get_table(expression):
                     )
                 )
             )
+
         except:
             return "expression_invalid"
+
         values = np.append(values, value)
+
     return TruthTable(var, values)
 
 
@@ -377,30 +464,40 @@ def parse_sop(sop):
 
 def parse_pos(pos):
     pos = pos.replace(")(", "-|").replace("(", "-|").replace(")", "-|").split("-")
+
     for n, term in enumerate(pos):
         if "+" not in term:
             pos[n] = ""
+
             for char in term:
                 pos[n] += char
+
                 if char != "!":
                     pos[n] += "|"
+
     pos = "".join(pos).split("|")
+
     for term in pos:
         if term == "":
             pos.remove(term)
+
     return pos
 
 
 def parse_product(product):
     out = []
     count = 0
+
     while count != len(product):
         if product[count] == "!":
             out.append(product[count] + product[count + 1])
             count += 1
+
         else:
             out.append(product[count])
+
         count += 1
+
     return out
 
 

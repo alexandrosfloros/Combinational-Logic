@@ -94,6 +94,7 @@ class Interface:
 
         for i in range(16):
             table_dig_row = []
+
             for j in range(4):
                 dig = ttk.Button(self.table, state="disabled", width=4)
                 dig.grid(row=i + 1, column=j)
@@ -103,6 +104,7 @@ class Interface:
                     ttk.Button(
                         self.table, text=f"0{i}", state="disabled", width=4
                     ).grid(row=i + 1, column=5)
+
                 else:
                     ttk.Button(self.table, text=f"{i}", state="disabled", width=4).grid(
                         row=i + 1, column=5
@@ -174,6 +176,7 @@ class Interface:
 
         for i in range(4):
             kmap_min_row = []
+
             for j in range(4):
                 min = ttk.Button(self.kmap, width=4)
                 min.grid(row=i + 1, column=j + 1)
@@ -262,18 +265,22 @@ class Interface:
 
         if isinstance(self.table, str):
             self.error(self.table)
+
         else:
             self.clear_table()
 
             if self.table.num == 1:
                 self.table_var_combobox4.set(self.table.var)
+
             elif self.table.num == 2:
                 self.table_var_combobox3.set(self.table.var[0])
                 self.table_var_combobox4.set(self.table.var[1])
+
             elif self.table.num == 3:
                 self.table_var_combobox2.set(self.table.var[0])
                 self.table_var_combobox3.set(self.table.var[1])
                 self.table_var_combobox4.set(self.table.var[2])
+
             else:
                 self.table_var_combobox1.set(self.table.var[0])
                 self.table_var_combobox2.set(self.table.var[1])
@@ -289,10 +296,12 @@ class Interface:
         if self.table_var_combobox2.get() == "":
             self.table_var_combobox2.set(self.table_var_combobox1.get())
             self.table_var_combobox1.set("")
+
         if self.table_var_combobox3.get() == "":
             self.table_var_combobox3.set(self.table_var_combobox2.get())
             self.table_var_combobox2.set(self.table_var_combobox1.get())
             self.table_var_combobox1.set("")
+
         if self.table_var_combobox4.get() == "":
             self.table_var_combobox4.set(self.table_var_combobox3.get())
             self.table_var_combobox3.set(self.table_var_combobox2.get())
@@ -310,6 +319,7 @@ class Interface:
         for min in self.table_min_list[: 2 ** len(vars)]:
             if min["text"] == "":
                 min.configure(text="0")
+
             values = np.append(values, min["text"])
 
         self.table = TruthTable(vars, values)
@@ -320,31 +330,40 @@ class Interface:
 
         if self.table.num == 0:
             self.clear_table()
+
         elif self.table.num == 1:
             for row in self.table_dig_list[2:]:
                 for dig in row:
                     dig.configure(text="")
+
             for min in self.table_min_list[2:]:
                 min.configure(text="")
+
             for row in self.table_dig_list[:2]:
                 row[0].configure(text="")
                 row[1].configure(text="")
                 row[2].configure(text="")
+
         elif self.table.num == 2:
             for row in self.table_dig_list[4:]:
                 for dig in row:
                     dig.configure(text="")
+
             for min in self.table_min_list[4:]:
                 min.configure(text="")
+
             for row in self.table_dig_list[:4]:
                 row[0].configure(text="")
                 row[1].configure(text="")
+
         elif self.table.num == 3:
             for row in self.table_dig_list[8:]:
                 for dig in row:
                     dig.configure(text="")
+
             for min in self.table_min_list[8:]:
                 min.configure(text="")
+
             for row in self.table_dig_list[:8]:
                 row[0].configure(text="")
 
@@ -356,33 +375,40 @@ class Interface:
             self.table_var_combobox4,
         ):
             new = list(var["values"])
+
             if self.table_var_combobox1.get() != "":
                 new.remove(self.table_var_combobox1.get())
                 var.configure(values=tuple(new))
+
         for var in (
             self.table_var_combobox1,
             self.table_var_combobox3,
             self.table_var_combobox4,
         ):
             new = list(var["values"])
+
             if self.table_var_combobox2.get() != "":
                 new.remove(self.table_var_combobox2.get())
                 var.configure(values=tuple(new))
+
         for var in (
             self.table_var_combobox1,
             self.table_var_combobox2,
             self.table_var_combobox4,
         ):
             new = list(var["values"])
+
             if self.table_var_combobox3.get() != "":
                 new.remove(self.table_var_combobox3.get())
                 var.configure(values=tuple(new))
+
         for var in (
             self.table_var_combobox1,
             self.table_var_combobox2,
             self.table_var_combobox3,
         ):
             new = list(var["values"])
+
             if self.table_var_combobox4.get() != "":
                 new.remove(self.table_var_combobox4.get())
                 var.configure(values=tuple(new))
@@ -407,6 +433,7 @@ class Interface:
         for row in self.table_dig_list:
             for dig in row:
                 dig.configure(text="")
+
         for min in self.table_min_list:
             min.configure(text="")
 
@@ -415,19 +442,23 @@ class Interface:
 
         if self.table.num == 0:
             self.error("table_no_var")
+
         else:
             self.kmap = Kmap(self.table)
             self.clear_kmap()
 
             if self.table.num == 1:
                 self.kmap_row_var_combobox1.set(self.kmap.rows)
+
             elif self.table.num == 2:
                 self.kmap_row_var_combobox1.set(self.kmap.rows[0])
                 self.kmap_column_var_combobox1.set(self.kmap.columns[0])
+
             elif self.table.num == 3:
                 self.kmap_row_var_combobox1.set(self.kmap.rows[0])
                 self.kmap_column_var_combobox1.set(self.kmap.columns[0])
                 self.kmap_column_var_combobox2.set(self.kmap.columns[1])
+
             else:
                 self.kmap_row_var_combobox1.set(self.kmap.rows[0])
                 self.kmap_row_var_combobox2.set(self.kmap.rows[1])
@@ -446,10 +477,12 @@ class Interface:
         if self.kmap_column_var_combobox2.get() == "":
             self.kmap_column_var_combobox2.set(self.kmap_row_var_combobox2.get())
             self.kmap_row_var_combobox2.set("")
+
         if self.kmap_column_var_combobox1.get() == "":
             self.kmap_column_var_combobox1.set(self.kmap_column_var_combobox2.get())
             self.kmap_column_var_combobox2.set(self.kmap_row_var_combobox2.get())
             self.kmap_row_var_combobox2.set("")
+
         if self.kmap_row_var_combobox1.get() == "":
             self.kmap_row_var_combobox1.set(self.kmap_column_var_combobox1.get())
             self.kmap_column_var_combobox1.set(self.kmap_column_var_combobox2.get())
@@ -466,10 +499,13 @@ class Interface:
 
         for row in self.kmap_min_list[: 2 ** len(rows)]:
             group = []
+
             for min in row[: 2 ** len(columns)]:
                 if min["text"] == "":
                     min.configure(text="0")
+
                 group.append(min["text"])
+
             groups.append(group)
 
         values = np.array(groups)
@@ -482,29 +518,36 @@ class Interface:
 
         if table.num == 0:
             self.clear_kmap()
+
         elif table.num == 1:
             self.clear_kmap_labels()
             self.kmap_row_label1.configure(text="0")
             self.kmap_row_label2.configure(text="1")
+
             for row in self.kmap_min_list[2:]:
                 for min in row:
                     min.configure(text="")
+
             for row in self.kmap_min_list[:2]:
                 row[1].configure(text="")
                 row[2].configure(text="")
                 row[3].configure(text="")
+
         elif table.num == 2:
             self.clear_kmap_labels()
             self.kmap_row_label1.configure(text="0")
             self.kmap_row_label2.configure(text="1")
             self.kmap_column_label1.configure(text="0")
             self.kmap_column_label2.configure(text="1")
+
             for row in self.kmap_min_list[2:]:
                 for min in row:
                     min.configure(text="")
+
             for row in self.kmap_min_list[:2]:
                 row[2].configure(text="")
                 row[3].configure(text="")
+
         elif table.num == 3:
             self.clear_kmap_labels()
             self.kmap_row_label1.configure(text="0")
@@ -513,9 +556,11 @@ class Interface:
             self.kmap_column_label2.configure(text="01")
             self.kmap_column_label3.configure(text="11")
             self.kmap_column_label4.configure(text="10")
+
             for row in self.kmap_min_list[2:]:
                 for min in row:
                     min.configure(text="")
+
         else:
             self.kmap_row_label1.configure(text="00")
             self.kmap_row_label2.configure(text="01")
@@ -534,33 +579,40 @@ class Interface:
             self.kmap_column_var_combobox2,
         ):
             new = list(var["values"])
+
             if self.kmap_row_var_combobox1.get() != "":
                 new.remove(self.kmap_row_var_combobox1.get())
                 var.configure(values=tuple(new))
+
         for var in (
             self.kmap_row_var_combobox1,
             self.kmap_column_var_combobox1,
             self.kmap_column_var_combobox2,
         ):
             new = list(var["values"])
+
             if self.kmap_row_var_combobox2.get() != "":
                 new.remove(self.kmap_row_var_combobox2.get())
                 var.configure(values=tuple(new))
+
         for var in (
             self.kmap_row_var_combobox1,
             self.kmap_row_var_combobox2,
             self.kmap_column_var_combobox2,
         ):
             new = list(var["values"])
+
             if self.kmap_column_var_combobox1.get() != "":
                 new.remove(self.kmap_column_var_combobox1.get())
                 var.configure(values=tuple(new))
+
         for var in (
             self.kmap_row_var_combobox1,
             self.kmap_row_var_combobox2,
             self.kmap_column_var_combobox1,
         ):
             new = list(var["values"])
+
             if self.kmap_column_var_combobox2.get() != "":
                 new.remove(self.kmap_column_var_combobox2.get())
                 var.configure(values=tuple(new))
@@ -606,8 +658,10 @@ class Interface:
     def change_min(self, event):
         if event.widget["text"] == "0":
             event.widget.configure(text="1")
+
         elif event.widget["text"] == "1":
             event.widget.configure(text="X")
+
         elif event.widget["text"] == "X":
             event.widget.configure(text="0")
 
@@ -617,6 +671,7 @@ class Interface:
 
         if self.kmap.table.num == 0:
             self.error("kmap_no_var")
+
         else:
             self.sop_output_expression.configure(state="normal")
             self.pos_output_expression.configure(state="normal")
@@ -699,20 +754,24 @@ class Interface:
             messagebox.showerror(
                 "Could not fill table!", "Expression needs at least one variable!"
             )
+
         elif id == "expression_many_var":
             messagebox.showerror(
                 "Could not fill table!",
                 "Expression cannot have more than four variables!",
             )
+
         elif id == "expression_invalid":
             messagebox.showerror(
                 "Could not fill table!",
-                'Expression is invalid!\nSupported characters are English letters, and symbols "+", "*", "(" and ")".',
+                'Expression is invalid!\nSupported characters are English letters, and symbols "!", "+", "*", "(" and ")".',
             )
+
         elif id == "table_no_var":
             messagebox.showerror(
                 "Could not fill K-map!", "Truth table needs at least one variable!"
             )
+
         elif id == "kmap_no_var":
             messagebox.showerror(
                 "Could not solve K-map!", "Karnaugh map needs at least one variable!"
